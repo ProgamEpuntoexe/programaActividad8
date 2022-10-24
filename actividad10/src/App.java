@@ -9,53 +9,34 @@ class Deck{
     //Aqui se declaran los metodos, pero el principal es aquel que lo inicializa
     public Deck(){
         cartas = new ArrayList<>();
-        for (int i = 0; i < 1; i++){
+        for (int i = 0; i < 52; i++){
             cartas.add(new Card());
         }
     }
     public void shuffle(){
         System.out.println("Se mezclo el Deck");
     }
-    public String head(){
-        try{
-            System.out.println(cartas.get(0).palo+", "+cartas.get(0).color+", "+cartas.get(0).valor);
-            cartas.remove(0);
-            System.out.println("Quedan "+cartas.size());
-            //Si ocurre excepcion porque ya no hay cartas
-        }catch (Exception e){
-            System.out.println("Se han agotado las cartas");
-            return "0";
-        }
-        return "2";
+    public void head(){
+        System.out.println(cartas.get(0).palo+", "+cartas.get(0).color+", "+cartas.get(0).valor);
+        cartas.remove(0);
+        System.out.println("Quedan "+cartas.size());
     }
-    public String pick(int index){
-        try{
-            System.out.println(cartas.get(index).palo+", "+cartas.get(index).color+", "+cartas.get(index).valor);
-            cartas.remove(index);
-            System.out.println("Quedan "+cartas.size());
-            //Si ocurre excepcion porque ya no hay cartas
-        }catch (Exception e){
-            System.out.println("Se han agotado las cartas");
-            return "0";
-        }
-        return "3";
+    public void pick(int index){
+        System.out.println(cartas.get(index).palo+", "+cartas.get(index).color+", "+cartas.get(index).valor);
+        cartas.remove(index);
+        System.out.println("Quedan "+cartas.size());
     }
-    public String hand(){
+    public void hand(){
         int cartasRestantes = 5;
         Card cartaRemovida = new Card();
-        try{
-            for (int i = 0; i < cartasRestantes; i++){
-                cartaRemovida = cartas.remove(0);
-                System.out.println(cartaRemovida.palo+", "+cartaRemovida.color+", "+cartaRemovida.valor);
-            }
-            System.out.println("Quedan "+cartas.size());
-            //Si ocurre excepcion porque ya no hay cartas
-        }catch (Exception e){
-            System.out.println("Se han agotado las cartas");
-            return "0";
+        if (cartas.size() < 5){
+            cartasRestantes = cartas.size();
         }
-        //Ahora se agregaron return para terminar el programa
-        return "4";
+        for (int i = 0; i < cartasRestantes; i++){
+            cartaRemovida = cartas.remove(0);
+            System.out.println(cartaRemovida.palo+", "+cartaRemovida.color+", "+cartaRemovida.valor);
+        }
+        System.out.println("Quedan "+cartas.size());
     }
 }
 class Card{
@@ -91,6 +72,12 @@ public class App {
         Random numeroRandom = new Random();
         //Menu de opciones, hay un bucle para que regrese cuando sea
         do{
+            //Si ya no quedan cartas, entonces romper este bucle
+            if (Mano.cartas.isEmpty()){
+                System.out.print("Ya no hay mas cartas, pulse ENTER para continuar");
+                entrada.readLine();
+                break;
+            }
             System.out.println("Menu de opciones");
             System.out.println("1) Mezclar el deck");
             System.out.println("2) Sacar una carta");
@@ -99,8 +86,13 @@ public class App {
             System.out.println("0) Salir");
             //Introducir una opcion
             System.out.print("Introdusca un comando: ");
-            try{
-                opcion = entrada.readLine();
+            opcion = entrada.readLine();
+            //En caso de vacio
+            if (opcion.isEmpty()){
+                System.out.println("Introdusca un comando");
+                opcion = "NO";
+                //En caso de cualquier otro comando
+            }else{
                 switch(opcion.charAt(0)){
                     //Mezclar el deck
                     case '1':{
@@ -111,30 +103,21 @@ public class App {
                     }
                     //Sacar una carta
                     case '2':{
-                        opcion = Mano.head();
+                        Mano.head();
                         System.out.print("Presione Enter para continuar");
                         entrada.readLine();
                         break;
                     }
                     //Sacar una carta al azar
                     case '3':{
-                        //Intentar hacer esto
-                        try{
-                            opcion = Mano.pick(numeroRandom.nextInt(Mano.cartas.size()));
-                            //Si ocurre una excepcion
-                        }catch (Exception e){
-                            System.out.println("Se han agotado las cartas");
-                            //Ejecutar esto intependientemente del catch
-                        }finally{
-                            System.out.print("Presione Enter para continuar");
-                            opcion = "0";
-                            entrada.readLine();
-                        }
+                        Mano.pick(numeroRandom.nextInt(Mano.cartas.size()));
+                        System.out.print("Presione Enter para continuar");
+                        entrada.readLine();
                         break;
                     }
                     //Generar una mano de 5 cartas
                     case '4':{
-                        opcion = Mano.hand();
+                        Mano.hand();
                         System.out.print("Presione Enter para continuar");
                         entrada.readLine();
                         break;
@@ -144,16 +127,13 @@ public class App {
                         System.out.println("Gracias por usar el programa");
                         break;
                     }
+                    //Comando invalido
+                    default:{
+                        System.out.println("Opcion no valida, presione ENTER para introducir otro comando");
+                        entrada.readLine();
+                    }
                 }
-                //Comando no valido
-            }catch (Exception e){
-                System.out.println("Favor de introducir una opcion, presione ENTER para introducir otro comando");
-                entrada.readLine();
-                opcion = "h";
-            }finally{
-
             }
-
         }while(opcion.charAt(0) != '0');
         System.out.print("Gracias por usar el programa, presione ENTER para terminar");
         entrada.readLine();
