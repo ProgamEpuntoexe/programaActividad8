@@ -9,7 +9,7 @@ class Deck{
     //Aqui se declaran los metodos, pero el principal es aquel que lo inicializa
     public Deck(){
         cartas = new ArrayList<>();
-        for (int i = 0; i < 1; i++){
+        for (int i = 0; i < 52; i++){
             cartas.add(new Card());
         }
     }
